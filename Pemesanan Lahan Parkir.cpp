@@ -198,7 +198,7 @@ void divideAndConquerExample(vector<int>& arr, int left, int right) {
     while (i <= mid && j <= right) {
         if (arr[i] < arr[j]) {
             temp.push_back(arr[i]);
-++i;
+            ++i;
         } else {
             temp.push_back(arr[j]);
             ++j;
