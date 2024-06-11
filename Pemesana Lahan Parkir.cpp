@@ -198,3 +198,108 @@ void divideAndConquerExample(vector<int>& arr, int left, int right) {
     while (i <= mid && j <= right) {
         if (arr[i] < arr[j]) {
             temp.push_back(arr[i]);
+++i;
+        } else {
+            temp.push_back(arr[j]);
+            ++j;
+        }
+    }
+    while (i <= mid) {
+        temp.push_back(arr[i]);
+        ++i;
+    }
+    while (j <= right) {
+        temp.push_back(arr[j]);
+        ++j;
+    }
+    for (int k = left; k <= right; ++k) {
+        arr[k] = temp[k - left];
+    }
+}
+
+int main() {
+    UserManagement userManagement;
+    int choice;
+
+    do {
+        displayMainMenu();
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                userManagement.registerUser();
+                break;
+            case 2: {
+                if (userManagement.loginUser()) {
+                    int numberOfSpots;
+                    cout << "Masukkan jumlah tempat parkir: ";
+                    cin >> numberOfSpots;
+
+                    vector<string> locations = {"A1", "A2", "B1", "B2", "C1", "C2"};
+                    ParkingLot parkingLot(numberOfSpots, locations);
+
+                    User user;
+                    user.registerUser();
+
+                    stack<int> bookingStack;
+                    queue<int> releaseQueue;
+
+                    int parkingChoice;
+                    do {
+                        displayParkingMenu();
+                        cin >> parkingChoice;
+
+                        switch (parkingChoice) {
+                            case 1:
+                                parkingLot.displayAvailableSpots();
+                                break;
+                            case 2: {
+                                int spotToBook;
+                                cout << "Masukkan nomor tempat yang ingin dipesan: ";
+                                cin >> spotToBook;
+                                string location;
+                                if (parkingLot.bookSpot(spotToBook, location)) {
+                                    cout << "\033[1;32mKonfirmasi: Tempat " << spotToBook << " telah berhasil dipesan!\033[0m\n";
+                                    bookingStack.push(spotToBook);
+                                    string receipt = generateReceipt(user, spotToBook, location);
+                                    cout << receipt;
+                                }
+                                break;
+                            }
+                            case 3: {
+                                int spotToRelease;
+                                if (!releaseQueue.empty()) {
+                                    spotToRelease = releaseQueue.front();
+                                    releaseQueue.pop();
+                                    parkingLot.releaseSpot(spotToRelease);
+                                } else {
+                                    cout << "\033[1;33mAntrian tempat untuk dilepaskan kosong.\033[0m\n";
+                                }
+                                break;
+                            }
+                            case 4:
+                                cout << "\033[1;32mTerima kasih telah menggunakan layanan parkir kami!\033[0m\n";
+                                cout << "======================" << endl;
+                                cout << "     TERIMAKASIH    " << endl;
+                                cout << "======================" << endl;
+                                break;
+                            default:
+                                cout << "\033[1;31mPilihan tidak valid. Silakan coba lagi.\033[0m\n";
+                        }
+                    } while (parkingChoice != 4);
+                }
+                break;
+            }
+            case 3:
+                userManagement.displayRegisteredUsers();
+                break;
+            case 4:
+                cout << "\033[1;32mTerima kasih telah menggunakan program ini!\033[0m\n";
+                break;
+            default:
+                cout << "\033[1;31mPilihan tidak valid. Silakan coba lagi.\033[0m\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}
